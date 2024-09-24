@@ -1,0 +1,8 @@
+no idea how to make a csv so im sticking to my roots
+
+0 - green light
+1 - red light
+2 - stop 
+3 - 55
+4 - sheep static
+5 - sheep dynamic
