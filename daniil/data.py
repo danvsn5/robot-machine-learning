@@ -11,6 +11,7 @@ from sklearn.metrics import classification_report
 
 
 import joblib
+import torch as pytorch
 
 
 print("Method run at: ", pd.to_datetime('today'))
@@ -21,7 +22,7 @@ print("Method run at: ", pd.to_datetime('today'))
 # put each class variable into an array
 
 
-data_dir = './dataset'
+data_dir = './datasetNEW'
 
 
 flat_data_arr=[]
@@ -29,10 +30,10 @@ flat_data_arr=[]
 
 target_arr=[]
 
-labels = list(range(4))
+labels = os.listdir(data_dir)
 
 # runs through all images on dataset flattening each image and resizing it to 32x32
-for identification_tag in range(4):
+for identification_tag in labels:
     print(identification_tag)
     class_path = os.path.join(data_dir, str(identification_tag))
     for img_name in os.listdir(class_path):
@@ -40,8 +41,10 @@ for identification_tag in range(4):
         img_path = os.path.join(class_path, img_name)
         
         img_array=imread(os.path.join(class_path,img_name))
+
+        img_resized=resize(img_array,(128,128,3))
         
-        flat_data_arr.append(img_array.flatten())
+        flat_data_arr.append(img_resized.flatten())
               
         target_arr.append(identification_tag)
         
@@ -71,16 +74,20 @@ print("Begun at: ", pd.to_datetime('today'))
 
 for kernel in ['poly' , 'rbf']:
     for C in [0.1, 1]:
-        for gamma in [0.01, 0.1]:
-            svc = svm.SVC(kernel=kernel, C=C, max_iter=1000, verbose=0)
+        svc = svm.SVC(kernel=kernel, C=C, max_iter=1000, verbose=0)
             
-            svc.fit(x_train,y_train)            
-        
-            joblib.dump((svc, x_test, y_test), f'svc_model_{kernel}_{C}_{gamma}.joblib')
-            print(f"Model saved as svc_model_{kernel}_{C}_{gamma}.joblib")
-            print("saved at ", pd.to_datetime('today'))
-            
-            # create classification report for the newly created model
-            y_pred = svc.predict(x_test)
-            print(classification_report(y_test, y_pred))
-            print("report completed at ", pd.to_datetime('today'))
+        svc.fit(x_train,y_train)
+
+        # create classification report for the newly created model
+        y_pred = svc.predict(x_test)
+        print(classification_report(y_test, y_pred))
+        print("report completed at ", pd.to_datetime('today'))
+
+        joblib.dump((svc, x_test, y_test), f'svc_model_{kernel}_{C}.joblib')
+        print(f"Model saved as svc_model_{kernel}_{C}.joblib")
+        print("saved at ", pd.to_datetime('today'))
+
+for kernel in ['poly' , 'rbf']:
+    for C in [0.1, 1]:
+        pytorch.save(svc, f'svc_model_{kernel}_{C}.pth')
+        print(f"Model saved as svc_model_{kernel}_{C}.pth")
