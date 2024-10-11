@@ -42,7 +42,7 @@ for identification_tag in labels:
         
         img_array=imread(os.path.join(class_path,img_name))
 
-        img_resized=resize(img_array,(128,128,3))
+        img_resized=resize(img_array,(64,64,1))
         
         flat_data_arr.append(img_resized.flatten())
               
@@ -72,7 +72,7 @@ print("Begun at: ", pd.to_datetime('today'))
 
 # runs for loops creating the model with different parameters saving all models to joblib files to be tested in a differnt file
 
-for kernel in ['poly' , 'rbf']:
+for kernel in ['poly']:
     for C in [0.1, 1]:
         svc = svm.SVC(kernel=kernel, C=C, max_iter=1000, verbose=0)
             
@@ -87,7 +87,3 @@ for kernel in ['poly' , 'rbf']:
         print(f"Model saved as svc_model_{kernel}_{C}.joblib")
         print("saved at ", pd.to_datetime('today'))
 
-for kernel in ['poly' , 'rbf']:
-    for C in [0.1, 1]:
-        pytorch.save(svc, f'svc_model_{kernel}_{C}.pth')
-        print(f"Model saved as svc_model_{kernel}_{C}.pth")
